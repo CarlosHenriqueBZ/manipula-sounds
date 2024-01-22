@@ -6,7 +6,7 @@
 <p align="center">Next.JS React</p>
 
 <p align="center">
-	<a href="https://link.vercel](https://manipula-sounds.vercel.app/)">Live Demo (Aplicação)</a>
+	<a href="https://https://manipula-sounds.vercel.app/)">Live Demo (https://manipula-sounds.vercel.app/)</a>
 </p>
 
 <p align="center">
