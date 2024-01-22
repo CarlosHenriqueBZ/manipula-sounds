@@ -44,4 +44,39 @@ export interface Album {
   type: string;
 }
 
+interface Artists {
+  data: Artist[];
+}
+
+interface Tracks {
+  data: Track[];
+}
+
+export interface Podcast {
+  id: number;
+  title: string;
+  description: string;
+  available: boolean;
+  fans: number;
+  link: string;
+  share: string;
+  picture: string;
+  picture_small: string;
+  picture_medium: string;
+  picture_big: string;
+  picture_xl: string;
+  type: string;
+}
+
+export interface Podcasts {
+  data: Podcast[];
+  total: number;
+}
+
+export interface Payload {
+  tracks: Tracks;
+  artists: Artists;
+  podcasts: Podcasts;
+}
+
 export interface DeezerTrackData extends Track {}

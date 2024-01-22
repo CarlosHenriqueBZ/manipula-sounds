@@ -4,12 +4,13 @@ import AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
 import useWindowDimensions from '../utils/useWindowDimensions';
 import api from '@/utils/api';
-import { DeezerTrackData, Track } from '@/utils/interfaces'
+import { DeezerTrackData, Payload, Track } from '@/utils/interfaces'
  import { Plus } from 'react-feather'
 interface CardProps {
-  moment: Track;
-  onOpenPlayer: (track: DeezerTrackData) => void;
+	moment: Track
+	onOpenPlayer: (track: Track[]) => void
 }
+
 
 const Card: React.FC<CardProps> = ({ moment, onOpenPlayer }) => {
 	function formatDuration(time: number) {
@@ -19,7 +20,7 @@ const Card: React.FC<CardProps> = ({ moment, onOpenPlayer }) => {
 		return `${minutes}:${lessSeconds}`
 	}
 
-	const [activePopover, setActivePopover] = useState<number>(0)
+const [activePopover, setActivePopover] = useState<number | null>(null)
   const [favorites, setFavorites] = useState<Track[]>([])
 
 const togglePopover = (popoverId: number) => {
@@ -60,7 +61,7 @@ const togglePopover = (popoverId: number) => {
 						<a
 							key={moment.id}
 							className='group'
-							onClick={() => onOpenPlayer(moment.preview)}
+							onClick={() => onOpenPlayer([moment])}
 						>
 							<div className='cursor-pointer aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7'>
 								<img
@@ -92,7 +93,7 @@ const togglePopover = (popoverId: number) => {
 												aria-labelledby='options-menu'
 											>
 												{favorites?.some(
-													(favMoment: Track[]) => favMoment.id === moment.id,
+													(favMoment: Track) => favMoment.id === moment.id,
 												) ? (
 													<a
 														className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900'
@@ -105,7 +106,7 @@ const togglePopover = (popoverId: number) => {
 													<a
 														className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900'
 														role='menuitem'
-														onClick={() => handleClickFavorites(moment as [])}
+														onClick={() => handleClickFavorites(moment)}
 													>
 														Adicionar aos Favoritos
 													</a>
@@ -141,28 +142,31 @@ const togglePopover = (popoverId: number) => {
 	)
 }
 
-const Index = ({ data }) => {
-  const [openTrack, setOpenTrack] = useState(false);
-  const [selectedTrack, setSelectedTrack] = useState(null);
-  const { width } = useWindowDimensions();
-  const isMobile = width <= 768;
+const Index: React.FC<{ data: Payload }> = ({ data }) => {
+	console.log(data, '@data')
+	const [openTrack, setOpenTrack] = useState(false)
+	const [selectedTrack, setSelectedTrack] = useState<string | null>(null)
+	const { width } = useWindowDimensions()
+	const isMobile = width <= 768
 
-  const handleOpenPlayer = (track: Track[]) => {
-    setSelectedTrack(track);
-    setOpenTrack(true);
-  };
+	const handleOpenPlayer = (tracks: Track[]) => {
+		if (tracks && tracks.length > 0) {
+			setSelectedTrack(tracks[0].preview)
+			setOpenTrack(true)
+		}
+	}
 
-  const [searchTerm, setSearchTerm] = useState('');
+	const [searchTerm, setSearchTerm] = useState('')
 
-  const filteredMoments = data.tracks?.data?.filter((item) => {
-    return (
-      item.artist.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
+	const filteredMoments = data.tracks?.data?.filter((item) => {
+		return (
+			item.artist.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+			item.title.toLowerCase().includes(searchTerm.toLowerCase())
+		)
+	})
 
-  const dataTracks = filteredMoments ? filteredMoments : data.tracks?.data;
-  return (
+	const dataTracks = filteredMoments ? filteredMoments : data.tracks?.data
+	return (
 		<>
 			<Page>
 				<form>
@@ -180,7 +184,7 @@ const Index = ({ data }) => {
 				</form>
 				{dataTracks?.length ? (
 					<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
-						{dataTracks?.map((moment, index) => (
+						{dataTracks?.map((moment: Track, index: number) => (
 							<Card
 								key={index}
 								moment={moment}
@@ -240,7 +244,7 @@ const Index = ({ data }) => {
 			)}
 		</>
 	)
-};
+}
 
 export async function getServerSideProps() {
   try {
