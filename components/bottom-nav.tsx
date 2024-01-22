@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+// @ts-ignore
 import { UilHeart, UilFire } from '@iconscout/react-unicons'
 
 

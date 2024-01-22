@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import Page from '@/components/page';
+// @ts-ignore
 import { UilPlus } from '@iconscout/react-unicons';
 import AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
 import useWindowDimensions from '../utils/useWindowDimensions';
 import api from '@/utils/api';
 import { DeezerTrackData, Track } from '@/utils/interfaces'
-import Notification from './../components/notification';
 
 interface CardProps {
   moment: Track;
