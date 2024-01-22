@@ -1,8 +1,6 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-// @ts-ignore
-
-import { UilHeart, UilFire } from '@iconscout/react-unicons'
+import { TrendingUp, Heart } from 'react-feather'
 
 
 const BottomNav = () => {
@@ -40,11 +38,11 @@ const links = [
 	{
 		label: 'Bombando',
 		href: '/',
-		icon: <UilFire />,
+		icon: <TrendingUp />,
 	},
 	{
 		label: 'Favoritos',
 		href: '/favorites',
-		icon: <UilHeart />,
+		icon: <Heart />,
 	},
 ]

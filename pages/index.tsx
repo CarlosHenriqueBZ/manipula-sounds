@@ -1,13 +1,11 @@
 import { useState } from 'react';
 import Page from '@/components/page';
-// @ts-ignore
-import { UilPlus } from '@iconscout/react-unicons';
 import AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
 import useWindowDimensions from '../utils/useWindowDimensions';
 import api from '@/utils/api';
 import { DeezerTrackData, Track } from '@/utils/interfaces'
-
+ import { Plus } from 'react-feather'
 interface CardProps {
   moment: Track;
   onOpenPlayer: (track: DeezerTrackData) => void;
@@ -57,7 +55,6 @@ const togglePopover = (popoverId: number) => {
 	return (
 		<>
 			<div className=''>
-
 				<div className='mx-auto max-w-2xl lg:max-w-7xl '>
 					<div className='grid grid-cols'>
 						<a
@@ -78,53 +75,53 @@ const togglePopover = (popoverId: number) => {
 									{moment.artist.name}
 								</p>
 								<div className='relative inline-block cursor-pointer text-left'>
-  <UilPlus
-    className='border-gray-300 '
-    onClick={() => togglePopover(moment.id)}
-  />
+									<Plus
+										className='border-gray-300 '
+										onClick={() => togglePopover(moment.id)}
+									/>
 
-  {activePopover === moment.id && (
-    <div
-      key={moment.id}
-      className='origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5'
-    >
-      <div
-        className='py-1'
-        role='menu'
-        aria-orientation='vertical'
-        aria-labelledby='options-menu'
-      >
-        {favorites?.some(
-          (favMoment: Track[]) => favMoment.id === moment.id,
-        ) ? (
-          <a
-            className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-            role='menuitem'
-            onClick={() => handleClickFavorites(moment)}
-          >
-            Remover dos Favoritos
-          </a>
-        ) : (
-          <a
-            className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-            role='menuitem'
-            onClick={() => handleClickFavorites(moment as [])}
-          >
-            Adicionar aos Favoritos
-          </a>
-        )}
-        <a
-          href='#'
-          onClick={() => handleClickInteger(moment.link)}
-          className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-          role='menuitem'
-        >
-          Ouvir na Integra
-        </a>
-      </div>
-    </div>
-  )}
-</div>
+									{activePopover === moment.id && (
+										<div
+											key={moment.id}
+											className='origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5'
+										>
+											<div
+												className='py-1'
+												role='menu'
+												aria-orientation='vertical'
+												aria-labelledby='options-menu'
+											>
+												{favorites?.some(
+													(favMoment: Track[]) => favMoment.id === moment.id,
+												) ? (
+													<a
+														className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+														role='menuitem'
+														onClick={() => handleClickFavorites(moment)}
+													>
+														Remover dos Favoritos
+													</a>
+												) : (
+													<a
+														className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+														role='menuitem'
+														onClick={() => handleClickFavorites(moment as [])}
+													>
+														Adicionar aos Favoritos
+													</a>
+												)}
+												<a
+													href='#'
+													onClick={() => handleClickInteger(moment.link)}
+													className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+													role='menuitem'
+												>
+													Ouvir na Integra
+												</a>
+											</div>
+										</div>
+									)}
+								</div>
 							</div>
 
 							<h3 className='text-sm text-white-700'>{moment.title}</h3>
