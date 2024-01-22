@@ -1,13 +1,15 @@
 /** @type {import('next').NextConfig} */
 
 const withPWA = require('next-pwa')({
-	dest: 'public',
-	register: true,
-	skipWaiting: true,
-})
+  dest: 'public',
+  register: true,
+  skipWaiting: true,
+});
 
+const withTM = require('next-transpile-modules')(['@iconscout/react-unicons']);
 
-
-module.exports = withPWA({
-	reactStrictMode: true,
-})
+module.exports = withTM(
+  withPWA({
+    reactStrictMode: true,
+  })
+);
