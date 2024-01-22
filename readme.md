@@ -6,7 +6,7 @@
 <p align="center">Next.JS React</p>
 
 <p align="center">
-	<a href="https://link.vercel">Live demo</a>
+	<a href="[https://link.vercel](https://manipula-sounds.vercel.app/)">Live Demo (Aplicação)</a>
 </p>
 
 <p align="center">
@@ -39,7 +39,15 @@
 ## Galeria
 
 ### Desktop
+![webversion](https://github.com/CarlosHenriqueBZ/manipula-sounds/assets/83791891/ddd8d347-cc77-4980-876a-51e61bc3dae7)
 
-<
+
 ### Mobile
+
+![image](https://github.com/CarlosHenriqueBZ/manipula-sounds/assets/83791891/0a9475fb-8ec2-41ab-a935-4b7fa322d313)
+![image](https://github.com/CarlosHenriqueBZ/manipula-sounds/assets/83791891/65e04c5f-a2fe-46aa-a337-073c3c775624)
+![image](https://github.com/CarlosHenriqueBZ/manipula-sounds/assets/83791891/b587ac50-aa27-4022-a8cf-c3abf5f3fafb)
+
+
+
 
