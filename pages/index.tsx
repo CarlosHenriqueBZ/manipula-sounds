@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Page from '@/components/page';
 import AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
 import useWindowDimensions from '../utils/useWindowDimensions';
 import api from '@/utils/api';
-import { DeezerTrackData, Payload, Track } from '@/utils/interfaces'
- import { Plus } from 'react-feather'
+import { Payload, Track } from '@/utils/interfaces'
+ import { Heart, Music, Plus } from 'react-feather'
+import { IconButton, Menu, MenuButton, MenuItem, MenuList, useColorMode, useToast } from '@chakra-ui/react';
 interface CardProps {
 	moment: Track
 	onOpenPlayer: (track: Track[]) => void
@@ -13,6 +14,10 @@ interface CardProps {
 
 
 const Card: React.FC<CardProps> = ({ moment, onOpenPlayer }) => {
+	const toast = useToast()
+
+	 const { colorMode } = useColorMode()
+	 
 	function formatDuration(time: number) {
 		const minutes = Math.floor((time % 3600) / 60)
 		const lessSeconds = time % 60
@@ -20,36 +25,63 @@ const Card: React.FC<CardProps> = ({ moment, onOpenPlayer }) => {
 		return `${minutes}:${lessSeconds}`
 	}
 
-const [activePopover, setActivePopover] = useState<number | null>(null)
-  const [favorites, setFavorites] = useState<Track[]>([])
+const [favorites, setFavorites] = useState<Track[]>([])
 
-const togglePopover = (popoverId: number) => {
-	setActivePopover((prevActivePopover) => {
-		return prevActivePopover === popoverId ? null : popoverId
-	})
-}
 
 	const handleClickFavorites = (favorite: Track) => {
-		setFavorites((prevFavorites: Track[] | null) => {
-			const currentFavorites = prevFavorites || []
+		const storedFavorites = localStorage.getItem('favorites')
+		const prevFavorites: Track[] = storedFavorites
+			? JSON.parse(storedFavorites)
+			: []
 
-			const isMomentInFavorites = currentFavorites.some(
-				(favMoment) => favMoment.id === favorite.id,
+		const isMomentInFavorites = prevFavorites.some(
+			(favMoment) => favMoment.id === favorite.id,
+		)
+
+		let updatedFavorites: Track[]
+
+		if (isMomentInFavorites) {
+			updatedFavorites = prevFavorites.filter(
+				(favMoment) => favMoment.id !== favorite.id,
 			)
+			toast({
+				title: 'Removido dos favoritos',
+				status: 'warning', // ou 'success' dependendo do seu design
+				duration: 3000,
+				position: 'top',
+				isClosable: true,
+			})
+		} else {
+			updatedFavorites = [...prevFavorites, favorite]
+			toast({
+				title: 'Adicionado aos favoritos',
+				status: 'success',
+				position: 'top',
+				duration: 3000,
+				isClosable: true,
+			})
+		}
 
-			if (isMomentInFavorites) {
-				return currentFavorites.filter(
-					(favMoment) => favMoment.id !== favorite.id,
-				)
-			} else {
-				return [...currentFavorites, favorite]
-			}
-		})
+		setFavorites(updatedFavorites)
+		localStorage.setItem('favorites', JSON.stringify(updatedFavorites))
 	}
 
 	const handleClickInteger = (link: string) => {
 		if (link) {
 			window.open(link, '_blank')
+		}
+	}
+
+	const isMomentInFavorites = (momentId: number): boolean => {
+		if (typeof localStorage !== 'undefined') {
+			const storedFavorites = localStorage.getItem('favorites')
+			const favorites: Track[] = storedFavorites
+				? JSON.parse(storedFavorites)
+				: []
+
+			return favorites.some((favMoment) => favMoment.id === momentId)
+		} else {
+			return false
 		}
 	}
 
@@ -75,54 +107,33 @@ const togglePopover = (popoverId: number) => {
 								<p className='text-lg font-medium text-white-900'>
 									{moment.artist.name}
 								</p>
-								<div className='relative inline-block cursor-pointer text-left'>
-									<Plus
-										className='border-gray-300 '
-										onClick={() => togglePopover(moment.id)}
+								<Menu>
+									<MenuButton
+										as={IconButton}
+										aria-label='Options'
+										icon={<Plus size={20} />}
+										size={'25px'}
+										bg={`${colorMode === 'dark' ? 'white' : 'dark'}`}
+										color={`${colorMode === 'dark' ? 'white' : 'dark'}`}
 									/>
-
-									{activePopover === moment.id && (
-										<div
-											key={moment.id}
-											className='origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5'
+									<MenuList>
+										<MenuItem
+											isDisabled={isMomentInFavorites(moment.id)}
+											color={'black'}
+											onClick={() => handleClickFavorites(moment)}
+											icon={<Heart size={16} />}
 										>
-											<div
-												className='py-1'
-												role='menu'
-												aria-orientation='vertical'
-												aria-labelledby='options-menu'
-											>
-												{favorites?.some(
-													(favMoment: Track) => favMoment.id === moment.id,
-												) ? (
-													<a
-														className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-														role='menuitem'
-														onClick={() => handleClickFavorites(moment)}
-													>
-														Remover dos Favoritos
-													</a>
-												) : (
-													<a
-														className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-														role='menuitem'
-														onClick={() => handleClickFavorites(moment)}
-													>
-														Adicionar aos Favoritos
-													</a>
-												)}
-												<a
-													href='#'
-													onClick={() => handleClickInteger(moment.link)}
-													className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-													role='menuitem'
-												>
-													Ouvir na Integra
-												</a>
-											</div>
-										</div>
-									)}
-								</div>
+											Adicionar aos Favoritos
+										</MenuItem>
+										<MenuItem
+											color={'black'}
+											onClick={() => handleClickInteger(moment.link)}
+											icon={<Music size={16} />}
+										>
+											Ouvir na Integra
+										</MenuItem>
+									</MenuList>
+								</Menu>
 							</div>
 
 							<h3 className='text-sm text-white-700'>{moment.title}</h3>
@@ -143,11 +154,11 @@ const togglePopover = (popoverId: number) => {
 }
 
 const Index: React.FC<{ data: Payload }> = ({ data }) => {
-	console.log(data, '@data')
 	const [openTrack, setOpenTrack] = useState(false)
 	const [selectedTrack, setSelectedTrack] = useState<string | null>(null)
 	const { width } = useWindowDimensions()
 	const isMobile = width <= 768
+	const [filteredData, setFilteredData] = useState([])
 
 	const handleOpenPlayer = (tracks: Track[]) => {
 		if (tracks && tracks.length > 0) {
@@ -155,15 +166,31 @@ const Index: React.FC<{ data: Payload }> = ({ data }) => {
 			setOpenTrack(true)
 		}
 	}
-
+	
 	const [searchTerm, setSearchTerm] = useState('')
-
+	
 	const filteredMoments = data.tracks?.data?.filter((item) => {
 		return (
 			item.artist.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
 			item.title.toLowerCase().includes(searchTerm.toLowerCase())
 		)
 	})
+
+	 useEffect(() => {
+			const fetchData = async () => {
+				try {
+					const response = await api.get(`/search?q=${searchTerm}`)
+					const data = response.data
+					setFilteredData(data.tracks?.data || [])
+				} catch (error) {
+					console.error('Erro ao buscar dados da API:', error)
+					setFilteredData([])
+				}
+			}
+
+			fetchData()
+		}, [searchTerm])
+
 
 	const dataTracks = filteredMoments ? filteredMoments : data.tracks?.data
 	return (
@@ -265,5 +292,8 @@ export async function getServerSideProps() {
     };
   }
 }
+
+
+
 
 export default Index;
