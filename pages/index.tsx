@@ -47,7 +47,7 @@ const [favorites, setFavorites] = useState<Track[]>([])
 			)
 			toast({
 				title: 'Removido dos favoritos',
-				status: 'warning', // ou 'success' dependendo do seu design
+				status: 'warning',
 				duration: 3000,
 				position: 'top',
 				isClosable: true,
