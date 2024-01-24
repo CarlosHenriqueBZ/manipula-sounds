@@ -74,9 +74,14 @@ export interface Podcasts {
 }
 
 export interface Payload {
+  data: {
+  map(arg0: (moment: Track, index: number) => import("react").JSX.Element): import("react").ReactNode;
+  length: any;
   tracks: Tracks;
   artists: Artists;
   podcasts: Podcasts;
+  }
+  
 }
 
 export interface DeezerTrackData extends Track {}

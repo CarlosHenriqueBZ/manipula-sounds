@@ -23,16 +23,13 @@ import { useEffect, useState } from 'react'
 import { Heart, Menu, Music, Plus, TrendingUp, X } from 'react-feather'
 
 const Favorites = () => {
-	const { colorMode } = useColorMode()
-	const { isOpen, onOpen, onClose } = useDisclosure()
-  const [favoritesArray, setFavorites] = useState<Track[]>([])
+const { colorMode } = useColorMode()
+const { isOpen, onOpen, onClose } = useDisclosure()
+const [favoritesArray, setFavorites] = useState<Track[]>([])
 const [settedFavorite, setSettedFavorite] = useState<Track | null>(null)
-
-  const [songTitle, setSongTitle] = useState<string>()
-
-	let favorites: any
-
-  const toast = useToast()
+const [songTitle, setSongTitle] = useState<string>()
+let favorites: any
+const toast = useToast()
   
   const handleClickFavorites = () => {
 		if (!settedFavorite) {

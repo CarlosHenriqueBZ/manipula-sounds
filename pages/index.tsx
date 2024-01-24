@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import Page from '@/components/page';
 import AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
@@ -7,6 +7,7 @@ import api from '@/utils/api';
 import { Payload, Track } from '@/utils/interfaces'
  import { Heart, Music, Plus } from 'react-feather'
 import { IconButton, Menu, MenuButton, MenuItem, MenuList, useColorMode, useToast } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 interface CardProps {
 	moment: Track
 	onOpenPlayer: (track: Track[]) => void
@@ -154,11 +155,12 @@ const [favorites, setFavorites] = useState<Track[]>([])
 }
 
 const Index: React.FC<{ data: Payload }> = ({ data }) => {
+	const router = useRouter()
+
 	const [openTrack, setOpenTrack] = useState(false)
 	const [selectedTrack, setSelectedTrack] = useState<string | null>(null)
 	const { width } = useWindowDimensions()
 	const isMobile = width <= 768
-	const [filteredData, setFilteredData] = useState([])
 
 	const handleOpenPlayer = (tracks: Track[]) => {
 		if (tracks && tracks.length > 0) {
@@ -169,30 +171,24 @@ const Index: React.FC<{ data: Payload }> = ({ data }) => {
 	
 	const [searchTerm, setSearchTerm] = useState('')
 	
-	const filteredMoments = data.tracks?.data?.filter((item) => {
-		return (
-			item.artist.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-			item.title.toLowerCase().includes(searchTerm.toLowerCase())
-		)
-	})
+	
 
 	 useEffect(() => {
-			const fetchData = async () => {
-				try {
-					const response = await api.get(`/search?q=${searchTerm}`)
-					const data = response.data
-					setFilteredData(data.tracks?.data || [])
-				} catch (error) {
-					console.error('Erro ao buscar dados da API:', error)
-					setFilteredData([])
-				}
-			}
-
-			fetchData()
+			router.query.search = searchTerm
+			router.push(router)
 		}, [searchTerm])
 
+		 
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setSearchTerm(e.target.value)
+	}
 
-	const dataTracks = filteredMoments ? filteredMoments : data.tracks?.data
+	const handleInputKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+		if (e.key === 'Enter') {
+			e.preventDefault() 
+		}
+	}
+	const dataTracks = data?.data
 	return (
 		<>
 			<Page>
@@ -203,7 +199,8 @@ const Index: React.FC<{ data: Payload }> = ({ data }) => {
 								type='text'
 								placeholder='Pesquisar...'
 								value={searchTerm}
-								onChange={(e) => setSearchTerm(e.target.value)}
+								onChange={handleInputChange}
+								onKeyPress={handleInputKeyPress}
 								className='w-full h-10 pl-4 pr-10 border rounded-full focus:outline-none focus:border-zinc-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white'
 							/>
 						</div>
@@ -273,24 +270,24 @@ const Index: React.FC<{ data: Payload }> = ({ data }) => {
 	)
 }
 
-export async function getServerSideProps() {
-  try {
-    const response = await api.get('/chart');
-    const data = response.data;
-
-    return {
-      props: {
-        data,
-      },
-    };
-  } catch (error) {
-    console.error('Erro ao buscar dados da API:', error);
-    return {
-      props: {
-        data: null,
-      },
-    };
-  }
+export async function getServerSideProps(params: any) {
+	let query = params.query.search || 'system of a down'
+	try {
+		const response = await api.get(`/search?q=${query}`)
+		const data = response.data
+		return {
+			props: {
+				data,
+			},
+		}
+	} catch (error) {
+		console.error('Erro ao buscar dados da API:', error)
+		return {
+			props: {
+				data: null,
+			},
+		}
+	}
 }
 
 
