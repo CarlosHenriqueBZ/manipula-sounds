@@ -225,8 +225,11 @@ const Index: React.FC<{ data: Payload }> = ({ data }) => {
 										Nenhum resultado encontrado
 									</h1>
 									<p className='mt-4 text-xl text-white-500'>
-										Não foram encontrados nenhum resultado para sua busca de{' '}
-										{searchTerm}
+										{searchTerm &&
+											`Não foram encontrados nenhum resultado para sua busca de
+										${searchTerm}`}
+										{!searchTerm &&
+											`Não foram encontrados nenhum resultado para sua busca`}
 									</p>
 								</div>
 							</div>
